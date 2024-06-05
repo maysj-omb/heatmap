@@ -29,7 +29,7 @@ heatmap $ source .venv/bin/activate
 ```
 
 ## Use:
-See example notebook for use to get started.
+See example notebook to get started.
 
 ## Common Problems and F.A.Q.'s:
 - I am having trouble plotting geometries alongside my heatmap:
