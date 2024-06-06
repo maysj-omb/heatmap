@@ -3,8 +3,6 @@
 
 import numpy as np
 import pandas as pd
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 from scipy.ndimage import gaussian_filter
 
 def create_granular_map(x_coords:pd.Series, y_coords:pd.Series, bounds:tuple,
