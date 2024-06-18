@@ -1,13 +1,14 @@
 # Author: John Mays | Policy & Operations Research @ OMB
 # maysj at-symbol omb dot nyc dot gov | Last Updated: 06/05/24
 
+from builtins import ValueError
 import numpy as np
 import pandas as pd
 from scipy.ndimage import gaussian_filter
 
 def create_granular_map(x_coords:pd.Series, y_coords:pd.Series, bounds:tuple,
                         area_size:int, root:float=1, blur:bool=False,
-                        sigma:float=1) -> np.ndarray:
+                        sigma:float=1, normalize=True) -> np.ndarray:
     """
     WARNING: make sure bounds, x_coords, and y_coords all belong to the same
         coordinate ref system (CRS).
@@ -26,6 +27,9 @@ def create_granular_map(x_coords:pd.Series, y_coords:pd.Series, bounds:tuple,
         intensity_map: numpy matrix of floats [0.0, 1.0] to reflect the
             relative intensity of each square on the map
     """
+    if blur and not normalize:
+        raise ValueError("If you choose not to normalize, you cannot scale or blur")
+    
     x_min, y_min, x_max, y_max = bounds
     area_height = y_max - y_min
     area_width = x_max-x_min
@@ -59,11 +63,12 @@ def create_granular_map(x_coords:pd.Series, y_coords:pd.Series, bounds:tuple,
         else:
             missed_count += 1
     print(f'{missed_count} coords were not within bounds.')
-    # convert to floats & normalize:
-    intensity_map = intensity_map.astype(float)/intensity_map.max()
-    # scale map:
-    intensity_map = np.power(intensity_map, (1/root))
-    # optional blur map:
-    if blur:
-        intensity_map = gaussian_filter(intensity_map, sigma=sigma)
+    if normalize:
+      # convert to floats & normalize:
+      intensity_map = intensity_map.astype(float)/intensity_map.max()
+      # scale map:
+      intensity_map = np.power(intensity_map, (1/root))
+      # optional blur map:
+      if blur:
+          intensity_map = gaussian_filter(intensity_map, sigma=sigma)
     return intensity_map
